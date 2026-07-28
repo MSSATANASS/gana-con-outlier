@@ -1,55 +1,54 @@
 // ===== MENÚ MÓVIL =====
-const menuToggle = document.getElementById('menuToggle');
+const menuBtn = document.getElementById('menuBtn');
 const nav = document.getElementById('nav');
 
-menuToggle.addEventListener('click', () => {
-  nav.classList.toggle('nav--open');
-  menuToggle.classList.toggle('menu-toggle--open');
-});
+menuBtn.addEventListener('click', () => nav.classList.toggle('is-open'));
+nav.querySelectorAll('a').forEach(a =>
+  a.addEventListener('click', () => nav.classList.remove('is-open'))
+);
 
-// Cerrar menú al hacer clic en un enlace
-nav.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => {
-    nav.classList.remove('nav--open');
-    menuToggle.classList.remove('menu-toggle--open');
-  });
-});
-
-// ===== HEADER CON SOMBRA AL SCROLL =====
-const header = document.getElementById('header');
-window.addEventListener('scroll', () => {
-  header.classList.toggle('header--scrolled', window.scrollY > 10);
-});
+// ===== FECHA EN LA BARRA macOS =====
+const fecha = new Date();
+document.getElementById('menubarDate').textContent = new Intl.DateTimeFormat('es-MX', {
+  weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit'
+}).format(fecha).replace(/\./g, '');
 
 // ===== FAQ ACORDEÓN =====
-document.querySelectorAll('.faq__question').forEach(button => {
-  button.addEventListener('click', () => {
-    const item = button.parentElement;
-    const answer = item.querySelector('.faq__answer');
-    const isOpen = item.classList.contains('faq__item--open');
+document.querySelectorAll('.faq__q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.parentElement;
+    const answer = item.querySelector('.faq__a');
+    const abierto = item.classList.contains('is-open');
 
-    // Cerrar todos
-    document.querySelectorAll('.faq__item--open').forEach(openItem => {
-      openItem.classList.remove('faq__item--open');
-      openItem.querySelector('.faq__answer').style.maxHeight = null;
+    document.querySelectorAll('.faq__item.is-open').forEach(open => {
+      open.classList.remove('is-open');
+      open.querySelector('.faq__a').style.maxHeight = null;
     });
 
-    // Abrir el clickeado (si no estaba abierto)
-    if (!isOpen) {
-      item.classList.add('faq__item--open');
+    if (!abierto) {
+      item.classList.add('is-open');
       answer.style.maxHeight = answer.scrollHeight + 'px';
     }
   });
 });
 
-// ===== ANIMACIÓN REVEAL AL SCROLL =====
+// ===== REVEAL AL SCROLL =====
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      entry.target.classList.add('reveal--visible');
+      entry.target.classList.add('is-visible');
       observer.unobserve(entry.target);
     }
   });
 }, { threshold: 0.12 });
 
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ===== VIDEO DE FONDO: reintento de autoplay =====
+const video = document.querySelector('.bg-video video');
+if (video) {
+  const reproducir = () => video.play().catch(() => {});
+  reproducir();
+  document.addEventListener('click', reproducir, { once: true });
+  document.addEventListener('touchstart', reproducir, { once: true });
+}

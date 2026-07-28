@@ -1,248 +1,459 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gana con Outlier — Trabaja desde casa entrenando IA</title>
-  <meta name="description" content="Empieza a ganar dinero desde casa entrenando inteligencia artificial con Outlier. Sin horarios, sin experiencia en IA, pago semanal. Registro gratis.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gana con Outlier — Trabaja desde casa entrenando IA</title>
+<meta name="description" content="Gana dinero desde casa entrenando inteligencia artificial con Outlier. Sin horarios, sin experiencia en IA, pago semanal. Registro gratis.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- ===== HEADER ===== -->
-  <header class="header" id="header">
-    <div class="container header__inner">
-      <a href="#" class="logo">Gana<span>con</span>Outlier</a>
-      <nav class="nav" id="nav">
-        <a href="#que-es" class="nav__link">Qué es</a>
-        <a href="#como-funciona" class="nav__link">Cómo funciona</a>
-        <a href="#beneficios" class="nav__link">Beneficios</a>
-        <a href="#requisitos" class="nav__link">Requisitos</a>
-        <a href="#faq" class="nav__link">Preguntas</a>
-        <a href="https://app.outlier.ai/expert/referrals/link/4JBXAOTH_L2a6J68TED52x5hpHk" target="_blank" rel="noopener" class="btn btn--sm nav__cta">Empieza ahora</a>
-      </nav>
-      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </header>
+<!-- ===== FILTROS SVG DE RUIDO ===== -->
+<svg class="svg-defs" width="0" height="0" aria-hidden="true">
+  <filter id="c3-noise">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" />
+    <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.35 0" />
+    <feComposite in2="SourceGraphic" operator="in" result="noise" />
+    <feBlend in="SourceGraphic" in2="noise" mode="multiply" />
+  </filter>
+  <filter id="c3-noise-wm">
+    <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="2" stitchTiles="stitch" />
+    <feComponentTransfer><feFuncA type="linear" slope="0.075" /></feComponentTransfer>
+    <feComposite in2="SourceGraphic" operator="in" result="noise" />
+    <feBlend in="SourceGraphic" in2="noise" mode="overlay" />
+  </filter>
+</svg>
 
-  <!-- ===== HERO ===== -->
-  <section class="hero">
-    <div class="container hero__inner">
-      <p class="hero__badge reveal">🏠 100% remoto &nbsp;·&nbsp; ⏰ Sin horarios &nbsp;·&nbsp; 💸 Pago semanal</p>
-      <h1 class="hero__title reveal">Gana dinero desde casa<br><span>entrenando inteligencia artificial</span></h1>
-      <p class="hero__sub reveal">Outlier busca personas con conocimiento en idiomas, redacción, matemáticas, programación y más. Tú pones lo que sabes, ellos ponen el pago. <strong>No necesitas experiencia en IA.</strong></p>
-      <div class="hero__actions reveal">
-        <a href="https://app.outlier.ai/expert/referrals/link/4JBXAOTH_L2a6J68TED52x5hpHk" target="_blank" rel="noopener" class="btn btn--lg">Empieza ahora — es gratis →</a>
-        <a href="#como-funciona" class="btn btn--lg btn--ghost">Ver cómo funciona</a>
-      </div>
-      <p class="hero__note reveal">Registro gratuito · Sin experiencia en IA · Disponible en 50 países</p>
-      <div class="hero__stats reveal">
-        <div class="stat"><strong>$500M+</strong><span>pagados a expertos</span></div>
-        <div class="stat"><strong>100K+</strong><span>expertos activos</span></div>
-        <div class="stat"><strong>50</strong><span>países</span></div>
-        <div class="stat"><strong>4.1/5</strong><span>en Trustpilot</span></div>
-      </div>
-    </div>
-  </section>
+<!-- ===== VIDEO DE FONDO ===== -->
+<div class="bg-video">
+  <video autoplay loop muted playsinline
+    src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_064122_c4750c0e-7476-4b44-94a2-a85a65c63bf2.mp4"></video>
+</div>
+<div class="bg-scrim"></div>
 
-  <!-- ===== QUÉ ES ===== -->
-  <section class="section" id="que-es">
-    <div class="container">
-      <p class="section__tag reveal">La explicación simple</p>
-      <h2 class="section__title reveal">¿Qué es Outlier?</h2>
-      <div class="que-es__box reveal">
-        <p>Outlier es una plataforma donde <strong>personas reales enseñan a la inteligencia artificial a ser mejor</strong>.</p>
-        <p>Las empresas de IA necesitan humanos que revisen, califiquen y mejoren las respuestas de sus modelos — <strong>y pagan por ello</strong>. Outlier es operada por <strong>Scale AI</strong>, una empresa tecnológica de San Francisco que ya ha pagado más de <strong>$500 millones</strong> a sus colaboradores.</p>
-        <p class="que-es__simple">En pocas palabras: <em>respondes preguntas de tu área, la IA aprende de ti, y tú recibes dinero cada semana.</em></p>
-      </div>
-    </div>
-  </section>
+<!-- ===== LÍNEAS GUÍA ===== -->
+<div class="guide guide--l"></div>
+<div class="guide guide--r"></div>
 
-  <!-- ===== QUÉ HARÁS ===== -->
-  <section class="section section--alt" id="tareas">
-    <div class="container">
-      <p class="section__tag reveal">Tu día a día</p>
-      <h2 class="section__title reveal">¿Qué harás exactamente?</h2>
-      <p class="section__sub reveal">Tareas sencillas relacionadas con lo que ya sabes. Estos son los 3 tipos más comunes:</p>
-      <div class="cards">
-        <div class="card reveal">
-          <div class="card__icon">✍️</div>
-          <h3>Escribir preguntas difíciles</h3>
-          <p>Crea preguntas retadoras de tu área (las que harían fallar a una IA) junto con su respuesta correcta. Así la IA aprende.</p>
+<!-- ===== NAVBAR ===== -->
+<header class="navbar">
+  <div class="wrap navbar__inner">
+    <a href="#" class="logomark" aria-label="Inicio">
+      <svg viewBox="0 0 256 256" fill="currentColor"><path d="M 0 128 C 70.692 128 128 185.308 128 256 L 64 256 C 64 220.654 35.346 192 0 192 Z M 256 192 C 220.654 192 192 220.654 192 256 L 128 256 C 128 185.308 185.308 128 256 128 Z M 128 0 C 128 70.692 70.692 128 0 128 L 0 64 C 35.346 64 64 35.346 64 0 Z M 192 0 C 192 35.346 220.654 64 256 64 L 256 128 C 185.308 128 128 70.692 128 0 Z"/></svg>
+    </a>
+    <nav class="navlinks" id="nav">
+      <a href="#que-es" style="--d:.10s">Qué es</a>
+      <a href="#tareas" style="--d:.15s">Qué harás</a>
+      <a href="#pasos" style="--d:.20s">Pasos</a>
+      <a href="#opiniones" style="--d:.25s">Opiniones</a>
+      <a href="#faq" style="--d:.30s">Preguntas</a>
+      <a class="pill pill--white navlinks__cta" href="https://app.outlier.ai/expert/referrals/link/4JBXAOTH_L2a6J68TED52x5hpHk" target="_blank" rel="noopener">
+        Empieza gratis
+        <svg class="ico ico--chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+    </nav>
+    <a class="pill pill--white navbar__cta" href="https://app.outlier.ai/expert/referrals/link/4JBXAOTH_L2a6J68TED52x5hpHk" target="_blank" rel="noopener">
+      Empieza gratis
+      <svg class="ico ico--chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-label="Menú">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8h16M4 16h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <h1 class="hero__title">
+    <span class="hero__l1">Tu conocimiento.</span>
+    <span class="hero__l2 shiny">Monetizado.</span>
+  </h1>
+  <p class="hero__sub">Outlier te paga por entrenar inteligencia artificial desde tu casa. Tú pones lo que ya sabes — idiomas, redacción, matemáticas o código — y cobras cada semana. Sin experiencia en IA.</p>
+  <div class="hero__cta">
+    <a class="pill pill--white pill--lg" href="https://app.outlier.ai/expert/referrals/link/4JBXAOTH_L2a6J68TED52x5hpHk" target="_blank" rel="noopener">
+      Empieza gratis
+      <svg class="ico ico--chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </a>
+    <p class="hero__note">Registro gratuito · 30-90 min de proceso · 50 países</p>
+  </div>
+  <div class="hero__stats">
+    <div class="stat liquid-glass"><strong>$500M+</strong><span>pagados a expertos</span></div>
+    <div class="stat liquid-glass"><strong>100K+</strong><span>expertos activos</span></div>
+    <div class="stat liquid-glass"><strong>50</strong><span>países</span></div>
+    <div class="stat liquid-glass"><strong>4.1/5</strong><span>en Trustpilot</span></div>
+  </div>
+</section>
+
+<!-- ===== BARRA ESTILO macOS ===== -->
+<div class="menubar">
+  <div class="wrap menubar__inner">
+    <div class="menubar__left">
+      <svg class="menubar__logo" viewBox="0 0 256 256" fill="currentColor"><path d="M 0 128 C 70.692 128 128 185.308 128 256 L 64 256 C 64 220.654 35.346 192 0 192 Z M 256 192 C 220.654 192 192 220.654 192 256 L 128 256 C 128 185.308 185.308 128 256 128 Z M 128 0 C 128 70.692 70.692 128 0 128 L 0 64 C 35.346 64 64 35.346 64 0 Z M 192 0 C 192 35.346 220.654 64 256 64 L 256 128 C 185.308 128 128 70.692 128 0 Z"/></svg>
+      <span class="menubar__brand">Outlier</span>
+      <span>Archivo</span><span>Edición</span><span>Ver</span>
+      <span class="hide-sm">Proyectos</span><span class="hide-md">Ventana</span><span class="hide-md">Ayuda</span>
+    </div>
+    <div class="menubar__right">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <span id="menubarDate">lun 27 jul 1:09 PM</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VENTANA MOCKUP ===== -->
+<section class="window-section wrap">
+  <div class="mac-window">
+    <div class="mac-window__bar">
+      <span class="dot" style="background:#ff5f57"></span>
+      <span class="dot" style="background:#febc2e"></span>
+      <span class="dot" style="background:#28c840"></span>
+      <span class="mac-window__title">Outlier — Panel del experto</span>
+    </div>
+    <div class="mac-window__body">
+
+      <aside class="pane pane--side">
+        <a class="side-cta" href="https://app.outlier.ai/expert/referrals/link/4JBXAOTH_L2a6J68TED52x5hpHk" target="_blank" rel="noopener">
+          <svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>
+          Unirme a Outlier
+        </a>
+        <nav class="side-nav">
+          <span class="side-nav__item is-active">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.5L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.5-6.5A2 2 0 0016.7 4H7.3a2 2 0 00-1.8 1.5z"/></svg>
+            Tareas <em>12</em>
+          </span>
+          <span class="side-nav__item">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            Proyectos <em>3</em>
+          </span>
+          <span class="side-nav__item">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>
+            Ganancias
+          </span>
+          <span class="side-nav__item">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="6"/><path d="M15.5 13l1.5 8-5-3-5 3 1.5-8"/></svg>
+            Certificaciones <em>2</em>
+          </span>
+          <span class="side-nav__item">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.9"/></svg>
+            Comunidad
+          </span>
+          <span class="side-nav__item">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 015.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+            Ayuda
+          </span>
+        </nav>
+        <p class="side-title">Categorías</p>
+        <div class="side-labels">
+          <span><i style="background:#00d2ff"></i>Español</span>
+          <span><i style="background:#A4F4FD"></i>Redacción</span>
+          <span><i style="background:#f59e0b"></i>Matemáticas</span>
+          <span><i style="background:#10b981"></i>Programación</span>
         </div>
-        <div class="card reveal">
-          <div class="card__icon">⭐</div>
-          <h3>Calificar respuestas de la IA</h3>
-          <p>La IA da varias respuestas y tú las comparas, las ordenas y dices cuál es mejor y por qué. Tu criterio vale oro.</p>
+      </aside>
+
+      <div class="pane pane--list">
+        <div class="list-search">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <span>Buscar tareas</span>
         </div>
-        <div class="card reveal">
-          <div class="card__icon">📏</div>
-          <h3>Crear criterios de evaluación</h3>
-          <p>Defines qué hace que una respuesta sea buena o mala. Básicamente, le enseñas a la IA a pensar como un experto.</p>
+        <div class="task is-unread is-active">
+          <div class="task__top"><b>Español · Calificación</b><time>9:41</time></div>
+          <p class="task__subject">Califica respuestas de la IA</p>
+          <p class="task__preview">Compara dos respuestas y elige la mejor según precisión…</p>
+        </div>
+        <div class="task is-unread">
+          <div class="task__top"><b>Matemáticas</b><time>8:12</time></div>
+          <p class="task__subject">Escribe problemas retadores</p>
+          <p class="task__preview">Crea un problema que confunda al modelo y su solución…</p>
+        </div>
+        <div class="task">
+          <div class="task__top"><b>Programación</b><time>Ayer</time></div>
+          <p class="task__subject">Revisa código en Python</p>
+          <p class="task__preview">Detecta errores en la respuesta generada por la IA…</p>
+        </div>
+        <div class="task">
+          <div class="task__top"><b>Redacción</b><time>Ayer</time></div>
+          <p class="task__subject">Crea rúbricas de evaluación</p>
+          <p class="task__preview">Define qué hace que una respuesta sea buena o mala…</p>
+        </div>
+        <div class="task">
+          <div class="task__top"><b>Idiomas</b><time>Lun</time></div>
+          <p class="task__subject">Traducción EN → ES</p>
+          <p class="task__preview">Revisa la naturalidad de la traducción automática…</p>
+        </div>
+        <div class="task">
+          <div class="task__top"><b>Razonamiento</b><time>Lun</time></div>
+          <p class="task__subject">Evalúa lógica paso a paso</p>
+          <p class="task__preview">Marca en qué paso el modelo se equivocó…</p>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ===== CÓMO FUNCIONA ===== -->
-  <section class="section" id="como-funciona">
-    <div class="container">
-      <p class="section__tag reveal">Paso a paso</p>
-      <h2 class="section__title reveal">Cómo empezar en 4 pasos</h2>
-      <p class="section__sub reveal">Todo el proceso toma entre 30 y 90 minutos. Sin trucos, sin letra pequeña.</p>
-      <div class="steps">
-        <div class="step reveal">
-          <div class="step__num">1</div>
-          <div class="step__content">
-            <h3>Crea tu cuenta</h3>
-            <p>Haz clic en el botón de registro y crea tu perfil en 5 minutos. Es completamente gratis.</p>
+      <div class="pane pane--reader">
+        <div class="reader__tools">
+          <span class="tool"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 17l-5-5 5-5"/><path d="M20 18v-2a4 4 0 00-4-4H4"/></svg></span>
+          <span class="tool"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M15 17l5-5-5-5"/><path d="M4 18v-2a4 4 0 014-4h12"/></svg></span>
+          <span class="tool"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v11a1 1 0 001 1h12a1 1 0 001-1V8"/><path d="M10 12h4"/></svg></span>
+          <span class="tool"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></span>
+          <span class="tool tool--end"><svg class="ico" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></span>
+        </div>
+        <h3 class="reader__title">Califica respuestas de la IA</h3>
+        <div class="reader__meta">
+          <span class="avatar">O</span>
+          <div><b>Proyecto Español LATAM</b><span>para ti · 9:41</span></div>
+          <span class="tag">Español</span>
+        </div>
+        <div class="reader__body">
+          <div class="summary liquid-glass">
+            <p class="summary__head">
+              <svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>
+              Resumen de la tarea
+            </p>
+            <p>Compara dos respuestas del modelo, elige la mejor y explica por qué. Duración estimada: 20 minutos.</p>
           </div>
-        </div>
-        <div class="step reveal">
-          <div class="step__num">2</div>
-          <div class="step__content">
-            <h3>Completa tu perfil</h3>
-            <p>Sube tu CV, conecta tu LinkedIn y marca <strong>todas</strong> las áreas donde tienes conocimiento. Mientras más completo, más proyectos te llegan.</p>
-          </div>
-        </div>
-        <div class="step reveal">
-          <div class="step__num">3</div>
-          <div class="step__content">
-            <h3>Verifica tu identidad</h3>
-            <p>Te pedirán una identificación oficial y tu celular. Es un proceso estándar y seguro para confirmar que eres una persona real.</p>
-          </div>
-        </div>
-        <div class="step reveal">
-          <div class="step__num">4</div>
-          <div class="step__content">
-            <h3>Haz las pruebas y empieza a ganar</h3>
-            <p>Realiza las evaluaciones de habilidad <strong>con calma</strong> (lee bien las instrucciones). Al aprobarlas, te asignan proyectos pagados.</p>
-          </div>
+          <p>Hola,</p>
+          <p>En esta tarea verás una pregunta y dos respuestas generadas por la inteligencia artificial. Tu trabajo es decidir cuál es mejor evaluando precisión, claridad y utilidad.</p>
+          <p>No necesitas saber de IA: solo aplicar tu criterio como hablante nativo de español. Tu evaluación entrena directamente al modelo.</p>
+          <p class="muted">— El equipo de Outlier</p>
+          <span class="attach">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 12.5l-8.5 8.5a5.5 5.5 0 01-7.8-7.8L13 5a3.7 3.7 0 015.2 5.2l-8.2 8.2a1.85 1.85 0 01-2.6-2.6L15 8"/></svg>
+            guia-del-proyecto.pdf
+          </span>
         </div>
       </div>
-      <div class="center reveal">
-        <a href="https://app.outlier.ai/expert/referrals/link/4JBXAOTH_L2a6J68TED52x5hpHk" target="_blank" rel="noopener" class="btn btn--lg">Crear mi cuenta gratis →</a>
-      </div>
-    </div>
-  </section>
 
-  <!-- ===== BENEFICIOS ===== -->
-  <section class="section section--alt" id="beneficios">
-    <div class="container">
-      <p class="section__tag reveal">Por qué conviene</p>
-      <h2 class="section__title reveal">Beneficios de trabajar en Outlier</h2>
-      <div class="benefits">
-        <div class="benefit reveal"><span class="benefit__icon">🏡</span><div><h3>100% desde casa</h3><p>Trabaja desde tu sofá, tu cuarto o una playa. Solo necesitas internet.</p></div></div>
-        <div class="benefit reveal"><span class="benefit__icon">⏰</span><div><h3>Sin horario mínimo</h3><p>Tú decides cuándo y cuánto trabajar. ¿Solo tienes 2 horas el domingo? Perfecto.</p></div></div>
-        <div class="benefit reveal"><span class="benefit__icon">💵</span><div><h3>Pago semanal</h3><p>Cobras cada semana por tu trabajo aprobado, más bonos extra por buena calidad.</p></div></div>
-        <div class="benefit reveal"><span class="benefit__icon">🤖</span><div><h3>IA premium gratis</h3><p>Acceso gratuito a modelos de IA de pago mientras trabajas en la plataforma.</p></div></div>
-        <div class="benefit reveal"><span class="benefit__icon">📈</span><div><h3>Experiencia para tu CV</h3><p>Ganas experiencia real en entrenamiento de IA, una de las áreas que más crece.</p></div></div>
-        <div class="benefit reveal"><span class="benefit__icon">👥</span><div><h3>Comunidad de apoyo</h3><p>No estás solo: hay equipos y comunidad de expertos que te ayudan a mejorar.</p></div></div>
-      </div>
     </div>
-  </section>
+  </div>
+  <p class="mockup-note">Interfaz de ejemplo ilustrativa — así se siente trabajar desde el panel de Outlier.</p>
+</section>
 
-  <!-- ===== REQUISITOS ===== -->
-  <section class="section" id="requisitos">
-    <div class="container">
-      <p class="section__tag reveal">Lo que necesitas</p>
-      <h2 class="section__title reveal">Requisitos para aplicar</h2>
-      <p class="section__sub reveal">Nada raro. Solo lo básico para comprobar quién eres y qué sabes:</p>
-      <ul class="checklist reveal">
-        <li>Identificación oficial válida y un celular de tu país de residencia</li>
-        <li>Tu CV actualizado, destacando en qué eres bueno</li>
-        <li>Perfil de LinkedIn con tu educación y experiencia</li>
-        <li>Nivel universitario en algún área: estudiante, egresado, maestría o doctorado (depende del proyecto)</li>
-        <li>Inglés básico-intermedio para navegar la plataforma (hay proyectos en español)</li>
-        <li>Ganas de aprender y hacer las cosas bien</li>
+<!-- ===== QUÉ ES ===== -->
+<section class="section wrap two-col" id="que-es">
+  <div class="two-col__left reveal">
+    <p class="eyebrow"><i></i>Qué es <span class="eyebrow__tag">Sin tecnicismos</span></p>
+    <h2 class="h2">Personas reales enseñando<br>a la inteligencia artificial.</h2>
+    <p class="lead">Las empresas de IA necesitan humanos que revisen, califiquen y mejoren las respuestas de sus modelos — y pagan por ello. Outlier es operada por Scale AI y ya ha pagado más de $500 millones a colaboradores en 50 países.</p>
+    <div class="chips">
+      <span class="chip">Operada por Scale AI</span>
+      <span class="chip">$500M+ pagados</span>
+      <span class="chip">50 países</span>
+      <span class="chip">Pago semanal</span>
+    </div>
+  </div>
+  <div class="two-col__right reveal" style="--d:.12s">
+    <div class="panel liquid-glass">
+      <p class="panel__head">Una semana tipo · ejemplo ilustrativo</p>
+      <div class="panel__row liquid-glass">
+        <div class="panel__label"><span class="dot-s" style="background:#00d2ff"></span>Español <em>2 tareas</em></div>
+        <p>Calificar respuestas · ~2 h</p>
+      </div>
+      <div class="panel__row liquid-glass">
+        <div class="panel__label"><span class="dot-s" style="background:#f59e0b"></span>Matemáticas <em>3 tareas</em></div>
+        <p>Escribir problemas retadores · ~3 h</p>
+      </div>
+      <div class="panel__row liquid-glass">
+        <div class="panel__label"><span class="dot-s" style="background:#10b981"></span>Programación <em>1 tarea</em></div>
+        <p>Revisar código generado · ~1 h</p>
+      </div>
+      <div class="panel__row liquid-glass">
+        <div class="panel__label"><span class="dot-s" style="background:#A4F4FD"></span>Total <em>~6 horas</em></div>
+        <p>Tú decides cuántas horas y cuándo</p>
+      </div>
+      <p class="panel__foot">Las tareas y tarifas dependen de tu perfil, tu área y la demanda.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ÁREAS ===== -->
+<section class="section wrap cloud">
+  <p class="kicker reveal">Las áreas con más demanda ahora mismo</p>
+  <div class="cloud__grid">
+    <span class="reveal" style="--d:.00s">Español</span>
+    <span class="reveal" style="--d:.05s">Redacción</span>
+    <span class="reveal" style="--d:.10s">Matemáticas</span>
+    <span class="reveal" style="--d:.15s">Programación</span>
+    <span class="reveal" style="--d:.20s">Ciencias</span>
+    <span class="reveal" style="--d:.25s">Idiomas</span>
+    <span class="reveal" style="--d:.30s">Datos</span>
+    <span class="reveal" style="--d:.35s">Finanzas</span>
+  </div>
+</section>
+
+<!-- ===== OPINIONES ===== -->
+<section class="section wrap bordered" id="opiniones">
+  <p class="eyebrow eyebrow--center reveal"><i></i>Opiniones <span class="eyebrow__tag">Expertos reales</span></p>
+  <h2 class="h2 h2--center reveal">Lo que dicen quienes ya trabajan ahí.</h2>
+  <div class="quotes">
+    <figure class="quote liquid-glass reveal">
+      <blockquote>“Outlier me cambió la vida. Tengo mucha más tranquilidad y puedo trabajar desde donde sea, cuando quiera. Ahora tengo tiempo para mí y mis pasatiempos sin terminar agotado.”</blockquote>
+      <figcaption><b>Enzo D.</b><span>Especialista en idiomas</span><em>Países Bajos</em></figcaption>
+    </figure>
+    <figure class="quote liquid-glass reveal" style="--d:.10s">
+      <blockquote>“El trabajo es entretenido. Aprendo de una variedad enorme de temas porque cada vez que ves una tarea aprendes algo nuevo.”</blockquote>
+      <figcaption><b>Daliah B.</b><span>Especialista en idiomas</span><em>Alemania</em></figcaption>
+    </figure>
+    <figure class="quote liquid-glass reveal" style="--d:.20s">
+      <blockquote>“Veo Outlier como una gran oportunidad para trabajar con flexibilidad, mejorar tus habilidades y ganar más dinero a tu propio ritmo.”</blockquote>
+      <figcaption><b>Vaibhav</b><span>Experto en programación</span><em>Outlier</em></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ===== QUÉ HARÁS (marca de agua + tarjetas) ===== -->
+<section class="c3-section" id="tareas">
+  <div class="c3-watermark-container">
+    <div class="c3-watermark-main">
+      <span class="c3-watermark-line-1">Gana desde</span>
+      <span class="c3-watermark-line-2">tu casa</span>
+    </div>
+  </div>
+  <div class="c3-grid">
+    <article class="c3-card reveal">
+      <p class="c3-tier-small">Tarea 01</p>
+      <p class="c3-tier-large">Escribe preguntas difíciles</p>
+      <p class="c3-desc">Creas preguntas retadoras de tu área junto con la respuesta correcta.</p>
+      <ul class="c3-list">
+        <li><span class="c3-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Piensa algo que confunda a la IA</li>
+        <li><span class="c3-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Escribe tú la respuesta correcta</li>
+        <li><span class="c3-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>El modelo aprende de tu criterio</li>
       </ul>
-      <p class="requisitos__tip reveal">💡 <strong>Tip:</strong> aplica aunque no estés 100% seguro de cumplir todo. El registro es gratis y no pierdes nada intentando.</p>
+      <a class="c3-btn" href="https://app.outlier.ai/expert/referrals/link/4JBXAOTH_L2a6J68TED52x5hpHk" target="_blank" rel="noopener">Empieza ahora</a>
+    </article>
+    <article class="c3-card c3-card-pro reveal" style="--d:.10s">
+      <p class="c3-tier-small">Tarea 02</p>
+      <p class="c3-tier-large">Califica respuestas</p>
+      <p class="c3-desc">La IA da varias respuestas y tú decides cuál es mejor y por qué.</p>
+      <ul class="c3-list">
+        <li><span class="c3-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Compara dos o más respuestas</li>
+        <li><span class="c3-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Ordénalas de mejor a peor</li>
+        <li><span class="c3-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Explica tu razonamiento</li>
+      </ul>
+      <a class="c3-btn" href="https://app.outlier.ai/expert/referrals/link/4JBXAOTH_L2a6J68TED52x5hpHk" target="_blank" rel="noopener">Empieza ahora</a>
+    </article>
+    <article class="c3-card reveal" style="--d:.20s">
+      <p class="c3-tier-small">Tarea 03</p>
+      <p class="c3-tier-large">Crea criterios</p>
+      <p class="c3-desc">Defines qué hace que una respuesta sea buena o mala en tu campo.</p>
+      <ul class="c3-list">
+        <li><span class="c3-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Redacta rúbricas de evaluación</li>
+        <li><span class="c3-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Enseña a la IA a pensar como experto</li>
+        <li><span class="c3-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Mejora modelos de nueva generación</li>
+      </ul>
+      <a class="c3-btn" href="https://app.outlier.ai/expert/referrals/link/4JBXAOTH_L2a6J68TED52x5hpHk" target="_blank" rel="noopener">Empieza ahora</a>
+    </article>
+  </div>
+</section>
+
+<!-- ===== PASOS ===== -->
+<section class="section wrap" id="pasos">
+  <p class="eyebrow eyebrow--center reveal"><i></i>Paso a paso <span class="eyebrow__tag">30-90 min</span></p>
+  <h2 class="h2 h2--center reveal">Empieza en 4 pasos.</h2>
+  <p class="sub reveal">Sin trucos y sin letra pequeña. Todo el proceso se hace en una sola sentada.</p>
+  <div class="steps">
+    <div class="step liquid-glass reveal">
+      <span class="step__n">1</span>
+      <div><h3>Crea tu cuenta</h3><p>Regístrate gratis con tu correo. Toma unos 5 minutos.</p></div>
     </div>
-  </section>
-
-  <!-- ===== FAQ ===== -->
-  <section class="section section--alt" id="faq">
-    <div class="container">
-      <p class="section__tag reveal">Sin vergüenza, pregunta lo que sea</p>
-      <h2 class="section__title reveal">Preguntas frecuentes</h2>
-      <p class="section__sub reveal">Las dudas que todos tienen (las simples y las difíciles), respondidas con honestidad:</p>
-
-      <div class="faq">
-        <div class="faq__item reveal">
-          <button class="faq__question">¿Es gratis registrarse?<span class="faq__arrow">+</span></button>
-          <div class="faq__answer"><p>Sí, 100% gratis. Outlier <strong>nunca</strong> te pedirá dinero para registrarte ni para trabajar. Si alguien te cobra por entrar, no es Outlier: es una estafa.</p></div>
-        </div>
-        <div class="faq__item reveal">
-          <button class="faq__question">¿Es estafa o es real?<span class="faq__arrow">+</span></button>
-          <div class="faq__answer"><p>Es real. Outlier es operada por <strong>Scale AI</strong>, una empresa tecnológica de San Francisco. Ha pagado más de <strong>$500 millones</strong> a expertos en 50 países y tiene calificación de 4.1/5 en Trustpilot con miles de reseñas.</p></div>
-        </div>
-        <div class="faq__item reveal">
-          <button class="faq__question">¿Necesito experiencia en inteligencia artificial?<span class="faq__arrow">+</span></button>
-          <div class="faq__answer"><p>No. Solo necesitas conocimiento en <strong>tu área</strong>: idiomas, redacción, matemáticas, programación, ciencias, etc. La plataforma te enseña cómo hacer las tareas de IA.</p></div>
-        </div>
-        <div class="faq__item reveal">
-          <button class="faq__question">¿Necesito título universitario?<span class="faq__arrow">+</span></button>
-          <div class="faq__answer"><p>Depende del proyecto. La mayoría pide nivel universitario (estar estudiando, ser egresado o tener posgrado). Aun así, te conviene aplicar aunque no estés seguro: el registro es gratis.</p></div>
-        </div>
-        <div class="faq__item reveal">
-          <button class="faq__question">¿Hay horario mínimo obligatorio?<span class="faq__arrow">+</span></button>
-          <div class="faq__answer"><p>No. Es una de las mejores partes: trabajas cuando quieras, desde donde quieras, sin mínimo de horas. Tus ganancias dependen de las horas que decidas trabajar cada semana.</p></div>
-        </div>
-        <div class="faq__item reveal">
-          <button class="faq__question">¿Desde qué países puedo trabajar?<span class="faq__arrow">+</span></button>
-          <div class="faq__answer"><p>Outlier opera en <strong>50 países</strong>. Lo que sí necesitas es una identificación oficial y un celular del país donde vives.</p></div>
-        </div>
-        <div class="faq__item reveal">
-          <button class="faq__question">¿Cuánto puedo ganar realmente?<span class="faq__arrow">+</span></button>
-          <div class="faq__answer"><p>Varía según tu área de conocimiento y el proyecto que te asignen. Se paga por hora/tarea más bonos por calidad, con <strong>pagos semanales</strong>. Sé honesto contigo: no es un sueldo fijo ni te harás rico, es un <strong>ingreso extra flexible</strong> que crece si trabajas más y mejor.</p></div>
-        </div>
-        <div class="faq__item reveal">
-          <button class="faq__question">¿Cómo y cuándo me pagan?<span class="faq__arrow">+</span></button>
-          <div class="faq__answer"><p>Los pagos son <strong>semanales</strong> por el trabajo aprobado. El método de pago depende de tu país y la plataforma te muestra las opciones disponibles cuando te registras.</p></div>
-        </div>
-        <div class="faq__item reveal">
-          <button class="faq__question">¿Qué pasa si no paso las pruebas de habilidad?<span class="faq__arrow">+</span></button>
-          <div class="faq__answer"><p>No es el fin del mundo: puedes intentar en otras áreas de conocimiento. Por eso es clave hacerlas <strong>con calma</strong>, leer bien las instrucciones y no hacerlas a la carrera. De estas pruebas depende que te asignen proyectos.</p></div>
-        </div>
-        <div class="faq__item reveal">
-          <button class="faq__question">¿Por qué me piden mi identificación?<span class="faq__arrow">+</span></button>
-          <div class="faq__answer"><p>Para verificar que eres una persona real y mantener una comunidad confiable. Es un proceso estándar (como cuando abres una cuenta de banco) y toma unos minutos.</p></div>
-        </div>
-        <div class="faq__item reveal">
-          <button class="faq__question">¿Necesito saber inglés?<span class="faq__arrow">+</span></button>
-          <div class="faq__answer"><p>Sí, un nivel básico-intermedio para moverte por la plataforma, aunque hay proyectos en español y otros idiomas. Si estás leyendo esto y te defiendes un poco en inglés, vas bien.</p></div>
-        </div>
-        <div class="faq__item reveal">
-          <button class="faq__question">¿Siempre hay trabajo disponible?<span class="faq__arrow">+</span></button>
-          <div class="faq__answer"><p>Honestamente: <strong>no está garantizado</strong>. Los proyectos llegan según tu perfil y la demanda de los clientes. Por eso es importante completar tu perfil al 100%, marcar todas tus áreas y hacer muy bien las pruebas: así aumentan tus oportunidades.</p></div>
-        </div>
-      </div>
+    <div class="step liquid-glass reveal" style="--d:.08s">
+      <span class="step__n">2</span>
+      <div><h3>Completa tu perfil</h3><p>Sube tu CV, conecta LinkedIn y marca <b>todas</b> tus áreas de conocimiento.</p></div>
     </div>
-  </section>
-
-  <!-- ===== CTA FINAL ===== -->
-  <section class="cta-final">
-    <div class="container cta-final__inner reveal">
-      <h2>¿Listo para ganar desde casa?</h2>
-      <p>Crea tu cuenta gratis hoy. El proceso toma menos de 90 minutos y puedes empezar a recibir proyectos esta misma semana.</p>
-      <a href="https://app.outlier.ai/expert/referrals/link/4JBXAOTH_L2a6J68TED52x5hpHk" target="_blank" rel="noopener" class="btn btn--lg btn--white">Empieza ahora — es gratis →</a>
-      <p class="cta-final__note">Sin tarjeta · Sin pagos · Sin compromiso</p>
+    <div class="step liquid-glass reveal" style="--d:.16s">
+      <span class="step__n">3</span>
+      <div><h3>Verifica tu identidad</h3><p>Identificación oficial y celular. Proceso estándar y seguro.</p></div>
     </div>
-  </section>
-
-  <!-- ===== FOOTER ===== -->
-  <footer class="footer">
-    <div class="container">
-      <p class="footer__brand">Gana<span>con</span>Outlier</p>
-      <p class="footer__disclaimer">Este sitio pertenece a un colaborador independiente de Outlier y <strong>no es la página oficial</strong>. Los nombres y marcas mencionados pertenecen a sus respectivos dueños. Sitio oficial: <a href="https://outlier.ai" target="_blank" rel="noopener">outlier.ai</a></p>
+    <div class="step liquid-glass reveal" style="--d:.24s">
+      <span class="step__n">4</span>
+      <div><h3>Haz las pruebas y gana</h3><p>Realiza las evaluaciones con calma. Al aprobarlas te asignan proyectos pagados.</p></div>
     </div>
-  </footer>
+  </div>
+  <div class="center reveal">
+    <a class="pill pill--white pill--lg" href="https://app.outlier.ai/expert/referrals/link/4JBXAOTH_L2a6J68TED52x5hpHk" target="_blank" rel="noopener">
+      Crear mi cuenta gratis
+      <svg class="ico ico--chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </a>
+  </div>
+</section>
 
-  <script src="script.js"></script>
+<!-- ===== BENEFICIOS ===== -->
+<section class="section wrap bordered" id="beneficios">
+  <p class="eyebrow eyebrow--center reveal"><i></i>Beneficios <span class="eyebrow__tag">Por qué conviene</span></p>
+  <h2 class="h2 h2--center reveal">Trabajo flexible de verdad.</h2>
+  <div class="grid-3">
+    <div class="mini liquid-glass reveal"><h3>100% desde casa</h3><p>Trabaja desde tu cuarto, un café o la playa. Solo necesitas internet.</p></div>
+    <div class="mini liquid-glass reveal" style="--d:.06s"><h3>Sin horario mínimo</h3><p>¿Solo tienes dos horas el domingo? Perfecto, tú decides.</p></div>
+    <div class="mini liquid-glass reveal" style="--d:.12s"><h3>Pago semanal</h3><p>Cobras cada semana por el trabajo aprobado, más bonos por calidad.</p></div>
+    <div class="mini liquid-glass reveal" style="--d:.18s"><h3>IA premium gratis</h3><p>Acceso gratuito a modelos de pago mientras trabajas en la plataforma.</p></div>
+    <div class="mini liquid-glass reveal" style="--d:.24s"><h3>Experiencia real</h3><p>Sumas entrenamiento de IA a tu CV, una de las áreas que más crece.</p></div>
+    <div class="mini liquid-glass reveal" style="--d:.30s"><h3>Comunidad</h3><p>Equipos y foros de expertos que te ayudan cuando te atoras.</p></div>
+  </div>
+</section>
+
+<!-- ===== REQUISITOS ===== -->
+<section class="section wrap" id="requisitos">
+  <p class="eyebrow eyebrow--center reveal"><i></i>Requisitos <span class="eyebrow__tag">Lo básico</span></p>
+  <h2 class="h2 h2--center reveal">Qué necesitas para aplicar.</h2>
+  <ul class="checklist reveal">
+    <li><span class="c3-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Identificación oficial válida y celular de tu país</li>
+    <li><span class="c3-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>CV actualizado destacando en qué eres bueno</li>
+    <li><span class="c3-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Perfil de LinkedIn con tu educación y experiencia</li>
+    <li><span class="c3-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Nivel universitario en algún área (según el proyecto)</li>
+    <li><span class="c3-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Inglés básico-intermedio para navegar la plataforma</li>
+    <li><span class="c3-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Ganas de aprender y hacer las cosas bien</li>
+  </ul>
+  <p class="tip reveal">Aplica aunque no estés 100% seguro de cumplir todo: el registro es gratis y no pierdes nada intentando.</p>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="section wrap bordered" id="faq">
+  <p class="eyebrow eyebrow--center reveal"><i></i>Preguntas <span class="eyebrow__tag">Las fáciles y las difíciles</span></p>
+  <h2 class="h2 h2--center reveal">Sin vergüenza, aquí están las respuestas.</h2>
+  <div class="faq">
+    <div class="faq__item liquid-glass reveal"><button class="faq__q">¿Es gratis registrarse?<span class="faq__x">+</span></button><div class="faq__a"><p>Sí, 100% gratis. Outlier <b>nunca</b> te pedirá dinero para registrarte ni para trabajar. Si alguien te cobra por entrar, es una estafa.</p></div></div>
+    <div class="faq__item liquid-glass reveal"><button class="faq__q">¿Es estafa o es real?<span class="faq__x">+</span></button><div class="faq__a"><p>Es real. Outlier es operada por <b>Scale AI</b>, empresa tecnológica de San Francisco. Ha pagado más de <b>$500 millones</b> a expertos en 50 países y tiene 4.1/5 en Trustpilot con miles de reseñas.</p></div></div>
+    <div class="faq__item liquid-glass reveal"><button class="faq__q">¿Necesito experiencia en inteligencia artificial?<span class="faq__x">+</span></button><div class="faq__a"><p>No. Solo necesitas conocimiento en <b>tu área</b>: idiomas, redacción, matemáticas, programación, ciencias, etc. La plataforma te enseña cómo hacer las tareas.</p></div></div>
+    <div class="faq__item liquid-glass reveal"><button class="faq__q">¿Necesito título universitario?<span class="faq__x">+</span></button><div class="faq__a"><p>Depende del proyecto. La mayoría pide nivel universitario (estudiante, egresado o posgrado). Aun así conviene aplicar: el registro es gratis.</p></div></div>
+    <div class="faq__item liquid-glass reveal"><button class="faq__q">¿Hay horario mínimo obligatorio?<span class="faq__x">+</span></button><div class="faq__a"><p>No. Trabajas cuando quieras, desde donde quieras, sin mínimo de horas. Tus ganancias dependen de las horas que decidas trabajar.</p></div></div>
+    <div class="faq__item liquid-glass reveal"><button class="faq__q">¿Desde qué países puedo trabajar?<span class="faq__x">+</span></button><div class="faq__a"><p>Outlier opera en <b>50 países</b>. Necesitas identificación oficial y celular del país donde vives.</p></div></div>
+    <div class="faq__item liquid-glass reveal"><button class="faq__q">¿Cuánto puedo ganar realmente?<span class="faq__x">+</span></button><div class="faq__a"><p>Varía según tu área y el proyecto asignado. Se paga por hora o tarea, más bonos por calidad, con <b>pagos semanales</b>. Siendo honestos: no es un sueldo fijo ni te harás rico — es un <b>ingreso extra flexible</b> que crece si trabajas más y mejor.</p></div></div>
+    <div class="faq__item liquid-glass reveal"><button class="faq__q">¿Cómo y cuándo me pagan?<span class="faq__x">+</span></button><div class="faq__a"><p>Los pagos son <b>semanales</b> por el trabajo aprobado. El método depende de tu país y la plataforma te muestra las opciones al registrarte.</p></div></div>
+    <div class="faq__item liquid-glass reveal"><button class="faq__q">¿Qué pasa si no paso las pruebas?<span class="faq__x">+</span></button><div class="faq__a"><p>No es el fin del mundo: puedes intentar en otras áreas. Por eso conviene hacerlas <b>con calma</b>, leyendo bien las instrucciones. De ellas depende que te asignen proyectos.</p></div></div>
+    <div class="faq__item liquid-glass reveal"><button class="faq__q">¿Por qué me piden mi identificación?<span class="faq__x">+</span></button><div class="faq__a"><p>Para verificar que eres una persona real y mantener una comunidad confiable. Es un proceso estándar, como abrir una cuenta de banco.</p></div></div>
+    <div class="faq__item liquid-glass reveal"><button class="faq__q">¿Necesito saber inglés?<span class="faq__x">+</span></button><div class="faq__a"><p>Sí, nivel básico-intermedio para moverte por la plataforma, aunque hay proyectos en español y otros idiomas.</p></div></div>
+    <div class="faq__item liquid-glass reveal"><button class="faq__q">¿Siempre hay trabajo disponible?<span class="faq__x">+</span></button><div class="faq__a"><p>Honestamente: <b>no está garantizado</b>. Los proyectos llegan según tu perfil y la demanda. Completa tu perfil al 100%, marca todas tus áreas y haz muy bien las pruebas para aumentar tus oportunidades.</p></div></div>
+  </div>
+</section>
+
+<!-- ===== CTA FINAL ===== -->
+<section class="wrap final-wrap">
+  <div class="final liquid-glass reveal">
+    <div class="final__glow"></div>
+    <h2 class="final__title">Cierra las dudas.<br>Empieza a ganar.</h2>
+    <p class="final__sub">Miles de personas ya convierten lo que saben en un ingreso semanal desde su casa. El registro es gratis y toma menos de 90 minutos.</p>
+    <div class="final__btns">
+      <a class="pill pill--white pill--lg" href="https://app.outlier.ai/expert/referrals/link/4JBXAOTH_L2a6J68TED52x5hpHk" target="_blank" rel="noopener">
+        Empieza gratis
+        <svg class="ico ico--chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+      <a class="pill pill--ghost pill--lg" href="#faq">
+        Ver preguntas
+        <svg class="ico ico--chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="wrap">
+    <svg class="footer__logo" viewBox="0 0 256 256" fill="currentColor"><path d="M 0 128 C 70.692 128 128 185.308 128 256 L 64 256 C 64 220.654 35.346 192 0 192 Z M 256 192 C 220.654 192 192 220.654 192 256 L 128 256 C 128 185.308 185.308 128 256 128 Z M 128 0 C 128 70.692 70.692 128 0 128 L 0 64 C 35.346 64 64 35.346 64 0 Z M 192 0 C 192 35.346 220.654 64 256 64 L 256 128 C 185.308 128 128 70.692 128 0 Z"/></svg>
+    <p class="footer__text">Sitio de un colaborador independiente de Outlier. <b>No es la página oficial.</b> Las marcas mencionadas pertenecen a sus dueños. Sitio oficial: <a href="https://outlier.ai" target="_blank" rel="noopener">outlier.ai</a></p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>
