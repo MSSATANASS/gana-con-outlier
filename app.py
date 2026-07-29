@@ -179,13 +179,23 @@ async def admin_data(
     enriched = []
     at_risk = secured = 0
     for l in leads:
-        deadline = datetime.fromisoformat(l["deadline"])
-        days_left = (deadline - now).days
+        # Prefer the real per-referral reward from the Outlier dashboard;
+        # fall back to the global BONUS_USD for legacy rows.
+        reward = l.get("reward_usd") or BONUS_USD
+        # Prefer the real expiry date if we have it; else the 30-day deadline.
+        exp = l.get("expires")
+        try:
+            ref = datetime.fromisoformat(exp) if exp else datetime.fromisoformat(l["deadline"])
+        except (ValueError, TypeError):
+            ref = datetime.fromisoformat(l["deadline"])
+        if ref.tzinfo is None:
+            ref = ref.replace(tzinfo=timezone.utc)
+        days_left = (ref - now).days
         etapa = l["etapa"]
         if etapa == "pagado":
-            secured += BONUS_USD
+            secured += reward
         elif etapa in AT_RISK:
-            at_risk += BONUS_USD
+            at_risk += reward
         enriched.append({**l, "days_left": days_left})
     conv = round(100 * sum(1 for l in leads if l["etapa"] == "pagado") / len(leads)) if leads else 0
     return JSONResponse({
@@ -220,12 +230,38 @@ async def admin_update(
     return JSONResponse({"ok": True})
 
 
+class Progress(BaseModel):
+    id: int
+    tasks_done: int = 0
+    tasks_total: int = 0
+    tipo: str = "Outlier"
+    reward_usd: int = 100
+    expires: str = ""
+
+
+@app.post("/admin/progress")
+async def admin_progress(
+    p: Progress,
+    secret: Optional[str] = None,
+    x_admin_secret: Optional[str] = Header(None),
+) -> JSONResponse:
+    _check_admin(secret or x_admin_secret)
+    db.update_progress(p.id, p.tasks_done, p.tasks_total, p.tipo, p.reward_usd, p.expires)
+    return JSONResponse({"ok": True})
+
+
 class ManualLead(BaseModel):
     nombre: str
     email: EmailStr
-    whatsapp: str
+    whatsapp: str = ""
     fuente: str = "ig-manual"
     created_at: Optional[str] = None  # ISO; for backfilling the existing 8
+    tipo: str = "Outlier"
+    reward_usd: int = 100
+    tasks_done: int = 0
+    tasks_total: int = 0
+    expires: str = ""
+    etapa: str = "registrado"
 
 
 @app.post("/admin/delete")
@@ -256,6 +292,8 @@ async def admin_add(
         nombre=m.nombre, email=m.email, whatsapp=m.whatsapp, fuente=m.fuente,
         ip="manual", created_at=created_dt.isoformat(),
         deadline=(created_dt + timedelta(days=WINDOW_DAYS)).isoformat(),
+        tipo=m.tipo, reward_usd=m.reward_usd, tasks_done=m.tasks_done,
+        tasks_total=m.tasks_total, expires=m.expires, etapa=m.etapa,
     )
     return JSONResponse({"ok": True, "id": lead_id})
 

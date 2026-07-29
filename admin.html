@@ -55,7 +55,7 @@
 
   <table>
     <thead><tr>
-      <th>#</th><th>Nombre</th><th>Contacto</th><th>Etapa</th><th>Días</th><th>Fuente</th><th>Notas</th>
+      <th>#</th><th>Nombre</th><th>Contacto</th><th>Tipo</th><th>Tareas</th><th>$</th><th>Etapa</th><th>Días</th><th>Notas</th>
     </tr></thead>
     <tbody id="rows"></tbody>
   </table>
@@ -114,13 +114,17 @@ function renderRows(leads) {
     }).join('');
     var paid = l.etapa === 'pagado' || l.etapa === 'perdido';
     var dCls = paid ? 'ok' : daysClass(l.days_left);
+    var wa = l.whatsapp ? '<br><a class="wa" target="_blank" href="' + waLink(l.whatsapp, l.nombre) + '">wa ' + esc(l.whatsapp) + '</a>' : '<br><span style="color:#666">sin WhatsApp</span>';
+    var tareas = (l.tasks_done || 0) + '/' + (l.tasks_total || 0);
     return '<tr>' +
       '<td>' + l.id + '</td>' +
       '<td>' + esc(l.nombre) + '</td>' +
-      '<td>' + esc(l.email) + '<br><a class="wa" target="_blank" href="' + waLink(l.whatsapp, l.nombre) + '">wa ' + esc(l.whatsapp) + '</a></td>' +
+      '<td>' + esc(l.email) + wa + '</td>' +
+      '<td><span class="pill">' + esc(l.tipo || 'Outlier') + '</span></td>' +
+      '<td>' + tareas + '</td>' +
+      '<td style="font-weight:700">$' + (l.reward_usd || 0) + '</td>' +
       '<td><select onchange="upd(' + l.id + ', this.value)">' + opts + '</select></td>' +
       '<td class="days ' + dCls + '">' + (paid ? '—' : l.days_left + 'd') + '</td>' +
-      '<td><span class="pill">' + esc(l.fuente || '') + '</span></td>' +
       '<td><textarea rows="1" onblur="updNota(' + l.id + ', this.value)">' + esc(l.notas || '') + '</textarea></td>' +
       '</tr>';
   }).join('');

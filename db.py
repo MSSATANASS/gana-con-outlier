@@ -25,6 +25,16 @@ else:
 _COLUMNS = [
     "id", "nombre", "email", "whatsapp", "fuente", "ip",
     "created_at", "deadline", "etapa", "notas", "last_email_day", "unsubscribed",
+    "tipo", "reward_usd", "tasks_done", "tasks_total", "expires",
+]
+
+# Columns added after the first release; migrated in-place on startup.
+_MIGRATIONS = [
+    ("tipo", "TEXT DEFAULT 'Outlier'"),
+    ("reward_usd", "INTEGER DEFAULT 100"),
+    ("tasks_done", "INTEGER DEFAULT 0"),
+    ("tasks_total", "INTEGER DEFAULT 0"),
+    ("expires", "TEXT DEFAULT ''"),
 ]
 
 
@@ -55,13 +65,24 @@ def init_db() -> None:
         etapa TEXT DEFAULT 'registrado',
         notas TEXT DEFAULT '',
         last_email_day INTEGER DEFAULT -1,
-        unsubscribed INTEGER DEFAULT 0
+        unsubscribed INTEGER DEFAULT 0,
+        tipo TEXT DEFAULT 'Outlier',
+        reward_usd INTEGER DEFAULT 100,
+        tasks_done INTEGER DEFAULT 0,
+        tasks_total INTEGER DEFAULT 0,
+        expires TEXT DEFAULT ''
     );
     """
     ddl_sqlite = ddl_pg.replace("SERIAL PRIMARY KEY", "INTEGER PRIMARY KEY AUTOINCREMENT")
     with _conn() as conn:
         cur = conn.cursor()
         cur.execute(ddl_pg if _IS_PG else ddl_sqlite)
+        # Additive migrations for pre-existing tables.
+        for col, decl in _MIGRATIONS:
+            try:
+                cur.execute(f"ALTER TABLE leads ADD COLUMN {col} {decl}")
+            except Exception:
+                pass  # column already exists
         conn.commit()
 
 
@@ -71,12 +92,16 @@ def _row_to_dict(row: Any) -> dict:
     return {k: row[k] for k in row.keys()}
 
 
-def insert_lead(*, nombre, email, whatsapp, fuente, ip, created_at, deadline) -> int:
+def insert_lead(*, nombre, email, whatsapp, fuente, ip, created_at, deadline,
+                tipo="Outlier", reward_usd=100, tasks_done=0, tasks_total=0,
+                expires="", etapa="registrado") -> int:
     sql = (
-        f"INSERT INTO leads (nombre,email,whatsapp,fuente,ip,created_at,deadline,etapa) "
-        f"VALUES ({_ph(8)})"
+        f"INSERT INTO leads (nombre,email,whatsapp,fuente,ip,created_at,deadline,"
+        f"etapa,tipo,reward_usd,tasks_done,tasks_total,expires) "
+        f"VALUES ({_ph(13)})"
     )
-    args = (nombre, email, whatsapp, fuente, ip, created_at, deadline, "registrado")
+    args = (nombre, email, whatsapp, fuente, ip, created_at, deadline, etapa,
+            tipo, reward_usd, tasks_done, tasks_total, expires)
     with _conn() as conn:
         cur = conn.cursor()
         if _IS_PG:
@@ -148,4 +173,16 @@ def delete_lead(lead_id: int) -> None:
     with _conn() as conn:
         cur = conn.cursor()
         cur.execute(f"DELETE FROM leads WHERE id = {_ph(1)}", (lead_id,))
+        conn.commit()
+
+
+def update_progress(lead_id: int, tasks_done: int, tasks_total: int,
+                    tipo: str, reward_usd: int, expires: str) -> None:
+    with _conn() as conn:
+        cur = conn.cursor()
+        cur.execute(
+            f"UPDATE leads SET tasks_done={_ph(1)}, tasks_total={_ph(1)}, "
+            f"tipo={_ph(1)}, reward_usd={_ph(1)}, expires={_ph(1)} WHERE id={_ph(1)}",
+            (tasks_done, tasks_total, tipo, reward_usd, expires, lead_id),
+        )
         conn.commit()
