@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex,nofollow" />
+<title>Panel · Referidos Outlier</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, system-ui, sans-serif; background: #0b0b0d; color: #eee; padding: 24px; }
+  h1 { font-size: 1.4rem; margin-bottom: 4px; }
+  .muted { color: #888; font-size: .85rem; margin-bottom: 20px; }
+  .gate { max-width: 340px; margin: 80px auto; text-align: center; }
+  .gate input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #333; background: #151517; color: #fff; margin: 10px 0; }
+  .gate button, .btn { padding: 10px 16px; border-radius: 10px; border: 0; background: #6c8cff; color: #fff; font-weight: 700; cursor: pointer; }
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 12px; margin-bottom: 22px; }
+  .metric { background: #151517; border: 1px solid #262629; border-radius: 14px; padding: 16px; }
+  .metric .n { font-size: 1.7rem; font-weight: 800; }
+  .metric .l { font-size: .78rem; color: #8a8a8f; margin-top: 3px; text-transform: uppercase; letter-spacing: .05em; }
+  .metric.risk .n { color: #ffb454; }
+  .metric.secured .n { color: #6ede8a; }
+  table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid #222; vertical-align: top; }
+  th { color: #999; font-weight: 600; font-size: .76rem; text-transform: uppercase; }
+  select { background: #151517; color: #fff; border: 1px solid #333; border-radius: 8px; padding: 5px; }
+  .days { font-weight: 700; }
+  .days.warn { color: #ffb454; } .days.crit { color: #ff6b6b; } .days.ok { color: #6ede8a; }
+  .wa { color: #25d366; text-decoration: none; font-weight: 700; }
+  .pill { font-size: .72rem; padding: 2px 8px; border-radius: 999px; background: #262629; }
+  .tools { margin: 20px 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  textarea { width: 100%; background: #151517; color: #fff; border: 1px solid #333; border-radius: 8px; padding: 6px; font-size: .8rem; }
+  code { background: #1a1a1d; padding: 1px 5px; border-radius: 5px; }
+</style>
+</head>
+<body>
+<div id="gate" class="gate">
+  <h1>Panel de Referidos</h1>
+  <input type="password" id="secret" placeholder="Admin secret" />
+  <button onclick="enter()">Entrar</button>
+  <p id="gateErr" class="muted"></p>
+</div>
+
+<div id="app" style="display:none">
+  <h1>Panel de Referidos Outlier</h1>
+  <p class="muted">Seguimiento de leads · dinero en juego · cola de WhatsApp</p>
+
+  <div class="metrics" id="metrics"></div>
+
+  <div class="tools">
+    <button class="btn" onclick="load()">↻ Actualizar</button>
+    <button class="btn" style="background:#333" onclick="toggleWA()">📱 Cola WhatsApp</button>
+  </div>
+
+  <div id="waQueue" style="display:none;margin-bottom:22px"></div>
+
+  <table>
+    <thead><tr>
+      <th>#</th><th>Nombre</th><th>Contacto</th><th>Etapa</th><th>Días</th><th>Fuente</th><th>Notas</th>
+    </tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+</div>
+
+<script>
+var SECRET = '';
+var STAGES = [];
+var LEADS = [];
+
+function enter() {
+  SECRET = document.getElementById('secret').value.trim();
+  load(true);
+}
+function toggleWA() {
+  var q = document.getElementById('waQueue');
+  q.style.display = q.style.display === 'none' ? 'block' : 'none';
+}
+function daysClass(d) { return d < 5 ? 'crit' : (d < 12 ? 'warn' : 'ok'); }
+
+function waLink(num, nombre) {
+  var msg = encodeURIComponent('Hola ' + nombre + ', soy Gael 👋 Te escribo para ver cómo vas con tu registro en Outlier y ayudarte a que arranques con tus primeras tareas. ¿Ya hiciste el assessment?');
+  var clean = (num || '').replace(/[^0-9]/g, '');
+  return 'https://wa.me/' + clean + '?text=' + msg;
+}
+
+function load(first) {
+  fetch('/admin/data?secret=' + encodeURIComponent(SECRET))
+    .then(function (r) { if (!r.ok) throw new Error('401'); return r.json(); })
+    .then(function (d) {
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      STAGES = d.stages; LEADS = d.leads;
+      renderMetrics(d.metrics); renderRows(d.leads); renderWA(d.leads);
+    })
+    .catch(function () {
+      if (first) document.getElementById('gateErr').textContent = 'Secret incorrecto.';
+    });
+}
+
+function renderMetrics(m) {
+  document.getElementById('metrics').innerHTML =
+    metric(m.total, 'Total leads', '') +
+    metric('$' + m.at_risk_usd, 'En riesgo', 'risk') +
+    metric('$' + m.secured_usd, 'Asegurado', 'secured') +
+    metric(m.conversion_pct + '%', 'Conversión', '');
+}
+function metric(n, l, cls) {
+  return '<div class="metric ' + cls + '"><div class="n">' + n + '</div><div class="l">' + l + '</div></div>';
+}
+
+function renderRows(leads) {
+  document.getElementById('rows').innerHTML = leads.map(function (l) {
+    var opts = STAGES.map(function (s) {
+      return '<option value="' + s + '"' + (s === l.etapa ? ' selected' : '') + '>' + s + '</option>';
+    }).join('');
+    var paid = l.etapa === 'pagado' || l.etapa === 'perdido';
+    var dCls = paid ? 'ok' : daysClass(l.days_left);
+    return '<tr>' +
+      '<td>' + l.id + '</td>' +
+      '<td>' + esc(l.nombre) + '</td>' +
+      '<td>' + esc(l.email) + '<br><a class="wa" target="_blank" href="' + waLink(l.whatsapp, l.nombre) + '">wa ' + esc(l.whatsapp) + '</a></td>' +
+      '<td><select onchange="upd(' + l.id + ', this.value)">' + opts + '</select></td>' +
+      '<td class="days ' + dCls + '">' + (paid ? '—' : l.days_left + 'd') + '</td>' +
+      '<td><span class="pill">' + esc(l.fuente || '') + '</span></td>' +
+      '<td><textarea rows="1" onblur="updNota(' + l.id + ', this.value)">' + esc(l.notas || '') + '</textarea></td>' +
+      '</tr>';
+  }).join('');
+}
+
+function renderWA(leads) {
+  var pending = leads.filter(function (l) {
+    return ['registrado', 'assessment', 'estancado'].indexOf(l.etapa) >= 0;
+  });
+  document.getElementById('waQueue').innerHTML =
+    '<h3 style="margin-bottom:10px">A quién escribirle hoy (' + pending.length + ')</h3>' +
+    (pending.length ? pending.map(function (l) {
+      return '<div style="padding:8px 0;border-bottom:1px solid #222">' +
+        '<b>' + esc(l.nombre) + '</b> · ' + l.days_left + 'd restantes · etapa: ' + l.etapa +
+        ' — <a class="wa" target="_blank" href="' + waLink(l.whatsapp, l.nombre) + '">Escribir por WhatsApp →</a></div>';
+    }).join('') : '<p class="muted">Nadie pendiente. 🎉</p>');
+}
+
+function upd(id, etapa) {
+  post('/admin/update', { id: id, etapa: etapa, notas: findNota(id) }).then(function(){ load(); });
+}
+function updNota(id, notas) {
+  var l = LEADS.find(function (x) { return x.id === id; });
+  post('/admin/update', { id: id, etapa: l ? l.etapa : 'registrado', notas: notas });
+}
+function findNota(id) { var l = LEADS.find(function (x) { return x.id === id; }); return l ? (l.notas || '') : ''; }
+
+function post(url, body) {
+  return fetch(url + '?secret=' + encodeURIComponent(SECRET), {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+  });
+}
+function esc(s) { return (s == null ? '' : String(s)).replace(/[&<>"]/g, function (c) {
+  return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+</script>
+</body>
+</html>

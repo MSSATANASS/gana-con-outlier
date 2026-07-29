@@ -675,3 +675,44 @@ a { color: inherit; text-decoration: none; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* ===== MODAL DE CAPTURA ===== */
+.cap-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0, 0, 0, 0.66);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  display: none; align-items: center; justify-content: center; padding: 20px;
+}
+.cap-overlay.is-open { display: flex; animation: capFade .18s ease; }
+@keyframes capFade { from { opacity: 0 } to { opacity: 1 } }
+.cap-modal {
+  position: relative; width: 100%; max-width: 420px;
+  background: #0d0d0f; color: #fff;
+  border: 1px solid rgba(255,255,255,.12); border-radius: 20px;
+  padding: 34px 28px; box-shadow: 0 30px 80px rgba(0,0,0,.5);
+  animation: capRise .22s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes capRise { from { transform: translateY(14px); opacity: 0 } to { transform: none; opacity: 1 } }
+.cap-close {
+  position: absolute; top: 14px; right: 16px; background: none; border: 0;
+  color: rgba(255,255,255,.55); font-size: 28px; line-height: 1; cursor: pointer;
+}
+.cap-close:hover { color: #fff; }
+.cap-title { font-size: 1.35rem; font-weight: 800; margin: 0 0 8px; letter-spacing: -.02em; }
+.cap-sub { font-size: .92rem; color: rgba(255,255,255,.6); margin: 0 0 20px; line-height: 1.5; }
+.cap-form { display: flex; flex-direction: column; gap: 11px; }
+.cap-form input {
+  width: 100%; padding: 13px 15px; border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.04);
+  color: #fff; font-size: .95rem; font-family: inherit;
+}
+.cap-form input::placeholder { color: rgba(255,255,255,.4); }
+.cap-form input:focus { outline: none; border-color: #6c8cff; background: rgba(108,140,255,.08); }
+.cap-submit {
+  margin-top: 6px; padding: 14px; border: 0; border-radius: 12px; cursor: pointer;
+  background: #fff; color: #0d0d0f; font-weight: 800; font-size: .98rem; font-family: inherit;
+  transition: transform .12s ease, opacity .12s ease;
+}
+.cap-submit:hover { transform: translateY(-1px); }
+.cap-submit:disabled { opacity: .6; cursor: default; }
+.cap-note { min-height: 18px; margin: 6px 0 0; font-size: .82rem; color: #8fd39a; text-align: center; }

@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: outlier-referrals
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ADMIN_SECRET
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        value: admin@lastminutestickets.com
+      - key: REPLY_TO
+        value: gael@lastminutestickets.com
+      - key: PUBLIC_URL
+        value: https://outlier-referrals.onrender.com
+      - key: REFERRAL_LINK
+        value: https://app.outlier.ai/expert/referrals/link/4JBXAOTH_L2a6J68TED52x5hpHk
+      - key: BONUS_USD
+        value: "100"
+      - key: WINDOW_DAYS
+        value: "30"
