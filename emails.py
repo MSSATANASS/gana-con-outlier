@@ -131,7 +131,7 @@ def send_stage_email(*, to: str, nombre: str, day: int, unsubscribe_url: str) ->
     msg["Subject"] = subject
     msg.set_content(text, charset="utf-8")
 
-    with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as s:
+    with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=20) as s:
         s.starttls()
         s.login(SMTP_USER, SMTP_PASS)
         s.send_message(msg)

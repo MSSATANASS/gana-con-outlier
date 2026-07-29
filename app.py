@@ -27,7 +27,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, Header, HTTPException, Request
+from fastapi import BackgroundTasks, FastAPI, Header, HTTPException, Request
 from fastapi.responses import (
     FileResponse,
     HTMLResponse,
@@ -96,8 +96,26 @@ class LeadIn(BaseModel):
         return digits[:20]
 
 
+def _send_welcome(lead_id: int, email: str, nombre: str) -> None:
+    """Best-effort welcome email, run in the background so the HTTP request
+    returns instantly (SMTP can be slow/blocking)."""
+    try:
+        sent = emails.send_stage_email(
+            to=email, nombre=nombre, day=0,
+            unsubscribe_url=f"{PUBLIC_URL}/unsubscribe?id={lead_id}",
+        )
+        # Always advance the marker so the scheduler won't resend day 0.
+        db.mark_email_sent(lead_id, 0)
+        if not sent:
+            print(f"[lead] welcome not sent (SMTP off) lead={lead_id}")
+    except Exception as e:
+        print(f"[lead] welcome email failed lead={lead_id}: {e}")
+
+
 @app.post("/api/lead")
-async def create_lead(lead: LeadIn, request: Request) -> JSONResponse:
+async def create_lead(
+    lead: LeadIn, request: Request, background: BackgroundTasks
+) -> JSONResponse:
     # Honeypot: silently accept but drop bots.
     if lead.website:
         return JSONResponse({"ok": True, "referral": REFERRAL_LINK})
@@ -118,15 +136,8 @@ async def create_lead(lead: LeadIn, request: Request) -> JSONResponse:
         created_at=now.isoformat(),
         deadline=(now + timedelta(days=WINDOW_DAYS)).isoformat(),
     )
-    # Fire the welcome email immediately (best-effort).
-    try:
-        emails.send_stage_email(
-            to=lead.email, nombre=lead.nombre, day=0,
-            unsubscribe_url=f"{PUBLIC_URL}/unsubscribe?id={lead_id}",
-        )
-        db.mark_email_sent(lead_id, 0)
-    except Exception:
-        pass
+    # Welcome email in the background — never blocks the redirect.
+    background.add_task(_send_welcome, lead_id, lead.email, lead.nombre)
 
     return JSONResponse({"ok": True, "referral": REFERRAL_LINK, "id": lead_id})
 
