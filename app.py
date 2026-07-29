@@ -228,6 +228,17 @@ class ManualLead(BaseModel):
     created_at: Optional[str] = None  # ISO; for backfilling the existing 8
 
 
+@app.post("/admin/delete")
+async def admin_delete(
+    upd: dict,
+    secret: Optional[str] = None,
+    x_admin_secret: Optional[str] = Header(None),
+) -> JSONResponse:
+    _check_admin(secret or x_admin_secret)
+    db.delete_lead(int(upd["id"]))
+    return JSONResponse({"ok": True})
+
+
 @app.post("/admin/add")
 async def admin_add(
     m: ManualLead,

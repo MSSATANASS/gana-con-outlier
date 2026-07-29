@@ -142,3 +142,10 @@ def unsubscribe(lead_id: int) -> None:
         cur = conn.cursor()
         cur.execute(f"UPDATE leads SET unsubscribed = 1 WHERE id = {_ph(1)}", (lead_id,))
         conn.commit()
+
+
+def delete_lead(lead_id: int) -> None:
+    with _conn() as conn:
+        cur = conn.cursor()
+        cur.execute(f"DELETE FROM leads WHERE id = {_ph(1)}", (lead_id,))
+        conn.commit()
