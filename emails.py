@@ -6,9 +6,16 @@ best-effort: if SMTP is not configured, callers should catch and log.
 """
 from __future__ import annotations
 
+import json
 import os
 import smtplib
+import urllib.request
 from email.message import EmailMessage
+
+# Optional HTTP email provider (works on hosts that block outbound SMTP, e.g.
+# Render's free tier). If RESEND_API_KEY is set, we use Resend's HTTP API and
+# skip SMTP entirely.
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
 
 SMTP_HOST = os.environ.get("SMTP_HOST", "smtp.gmail.com")
 SMTP_PORT = int(os.environ.get("SMTP_PORT", "587"))
@@ -119,9 +126,33 @@ def send_stage_email(*, to: str, nombre: str, day: int, unsubscribe_url: str) ->
         return False
     subject, text = render(day, nombre, unsubscribe_url)
 
+    # Preferred: Resend HTTP API (not blocked by hosts that firewall SMTP).
+    if RESEND_API_KEY:
+        try:
+            payload = json.dumps({
+                "from": f"{SENDER_NAME} <{SMTP_FROM}>",
+                "to": [to],
+                "reply_to": REPLY_TO,
+                "subject": subject,
+                "text": text,
+            }).encode()
+            req = urllib.request.Request(
+                "https://api.resend.com/emails", data=payload,
+                headers={
+                    "Authorization": f"Bearer {RESEND_API_KEY}",
+                    "Content-Type": "application/json",
+                },
+            )
+            urllib.request.urlopen(req, timeout=20)
+            print(f"[emails] sent via resend day={day} to={to}")
+            return True
+        except Exception as e:
+            print(f"[emails] resend failed day={day} to={to}: {e}")
+            return False
+
+    # Fallback: SMTP (works locally / on hosts that allow port 587).
     if not SMTP_USER or not SMTP_PASS:
-        # Not configured — caller decides what to do. Log to stdout for Render.
-        print(f"[emails] (dry-run, no SMTP) day={day} to={to} subj={subject!r}")
+        print(f"[emails] (dry-run, no provider) day={day} to={to} subj={subject!r}")
         return False
 
     msg = EmailMessage()
@@ -135,5 +166,5 @@ def send_stage_email(*, to: str, nombre: str, day: int, unsubscribe_url: str) ->
         s.starttls()
         s.login(SMTP_USER, SMTP_PASS)
         s.send_message(msg)
-    print(f"[emails] sent day={day} to={to}")
+    print(f"[emails] sent via smtp day={day} to={to}")
     return True
