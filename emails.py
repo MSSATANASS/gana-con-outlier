@@ -120,6 +120,50 @@ def render(day: int, nombre: str, unsubscribe_url: str) -> tuple[str, str]:
     return subject, text
 
 
+# Stage changes that deserve an immediate alert to the admin (Gael).
+ALERT_SUBJECTS = {
+    "trabajando": "🔥 {nombre} está TRABAJANDO — casi cobras",
+    "pagado": "💰 ¡{nombre} PAGÓ! {reward} USD asegurados",
+    "estancado": "⚠️ {nombre} se estancó — intervenir hoy",
+}
+
+
+def send_admin_alert(to: str, lead: dict) -> bool:
+    """Alert the admin about a stage change that needs attention."""
+    etapa = lead.get("etapa", "")
+    if etapa not in ALERT_SUBJECTS or not RESEND_API_KEY:
+        return False
+    subject = ALERT_SUBJECTS[etapa].format(nombre=lead.get("nombre", ""), reward=lead.get("reward_usd", ""))
+    text = (
+        f"Cambio de etapa: {lead.get('nombre')} → {etapa}\n"
+        f"Email: {lead.get('email')}\n"
+        f"Tipo: {lead.get('tipo')} · Recompensa: ${lead.get('reward_usd')}\n"
+        f"Tareas: {lead.get('tasks_done', 0)}/{lead.get('tasks_total', 0)}\n"
+        f"Días restantes: {lead.get('days_left', '?')}\n"
+        f"Notas: {lead.get('notas') or '—'}\n"
+        f"Panel: {LANDING}/admin"
+    )
+    payload = json.dumps({
+        "from": f"{SENDER_NAME} <{SMTP_FROM}>",
+        "to": [to],
+        "reply_to": REPLY_TO,
+        "subject": subject,
+        "text": text,
+    }).encode()
+    try:
+        req = urllib.request.Request(
+            "https://api.resend.com/emails", data=payload,
+            headers={"Authorization": f"Bearer {RESEND_API_KEY}",
+                     "Content-Type": "application/json"},
+        )
+        urllib.request.urlopen(req, timeout=20)
+        print(f"[emails] alert sent to={to} etapa={etapa}")
+        return True
+    except Exception as e:
+        print(f"[emails] alert failed to={to}: {e}")
+        return False
+
+
 def send_stage_email(*, to: str, nombre: str, day: int, unsubscribe_url: str) -> bool:
     """Send the email for ``day``. Returns True if actually sent."""
     if day not in SEQUENCE:

@@ -50,6 +50,7 @@ ADMIN_SECRET = os.environ.get("ADMIN_SECRET", "dev-secret")
 BONUS_USD = int(os.environ.get("BONUS_USD", "100"))
 WINDOW_DAYS = int(os.environ.get("WINDOW_DAYS", "30"))
 PUBLIC_URL = os.environ.get("PUBLIC_URL", "https://gana-con-outlier.onrender.com")
+ALERT_TO = os.environ.get("ALERT_TO", "admin@lastminutestickets.com")
 
 STAGES = ["registrado", "assessment", "trabajando", "pagado", "estancado", "perdido"]
 # Stages that still count as "at risk" money (not yet paid, not yet lost).
@@ -226,7 +227,14 @@ async def admin_update(
     _check_admin(secret or x_admin_secret)
     if upd.etapa not in STAGES:
         raise HTTPException(400, "etapa inválida")
+    before = db.get_lead_by_id(upd.id)
     db.update_stage(upd.id, upd.etapa, upd.notas)
+    # Alert the admin on stage changes that need attention (trabajando/pagado/estancado).
+    if before and before.get("etapa") != upd.etapa:
+        try:
+            emails.send_admin_alert(to=ALERT_TO, lead={**before, "etapa": upd.etapa})
+        except Exception as e:
+            print(f"[admin] alert failed for lead {upd.id}: {e}")
     return JSONResponse({"ok": True})
 
 

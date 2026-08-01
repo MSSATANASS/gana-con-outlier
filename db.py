@@ -122,6 +122,14 @@ def get_lead_by_email(email: str) -> Optional[dict]:
         return _row_to_dict(row) if row else None
 
 
+def get_lead_by_id(lead_id: int) -> Optional[dict]:
+    with _conn() as conn:
+        cur = conn.cursor()
+        cur.execute(f"SELECT {','.join(_COLUMNS)} FROM leads WHERE id = {_ph(1)}", (lead_id,))
+        row = cur.fetchone()
+        return _row_to_dict(row) if row else None
+
+
 def all_leads() -> list[dict]:
     with _conn() as conn:
         cur = conn.cursor()

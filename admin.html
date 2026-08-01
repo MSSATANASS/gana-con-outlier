@@ -19,17 +19,34 @@
   .metric .l { font-size: .78rem; color: #8a8a8f; margin-top: 3px; text-transform: uppercase; letter-spacing: .05em; }
   .metric.risk .n { color: #ffb454; }
   .metric.secured .n { color: #6ede8a; }
-  table { width: 100%; border-collapse: collapse; font-size: .88rem; }
-  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid #222; vertical-align: top; }
-  th { color: #999; font-weight: 600; font-size: .76rem; text-transform: uppercase; }
-  select { background: #151517; color: #fff; border: 1px solid #333; border-radius: 8px; padding: 5px; }
-  .days { font-weight: 700; }
-  .days.warn { color: #ffb454; } .days.crit { color: #ff6b6b; } .days.ok { color: #6ede8a; }
-  .wa { color: #25d366; text-decoration: none; font-weight: 700; }
-  .pill { font-size: .72rem; padding: 2px 8px; border-radius: 999px; background: #262629; }
   .tools { margin: 20px 0; display: flex; gap: 10px; flex-wrap: wrap; }
   textarea { width: 100%; background: #151517; color: #fff; border: 1px solid #333; border-radius: 8px; padding: 6px; font-size: .8rem; }
   code { background: #1a1a1d; padding: 1px 5px; border-radius: 5px; }
+
+  .board { display: flex; gap: 12px; align-items: flex-start; overflow-x: auto; padding-bottom: 12px; }
+  .col { flex: 1 1 0; min-width: 200px; background: #121215; border: 1px solid #232327; border-radius: 14px; padding: 10px; }
+  .col-head { display: flex; justify-content: space-between; align-items: center; padding: 4px 6px 10px; }
+  .col-name { font-weight: 800; font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; color: #ccc; }
+  .col-count { font-size: .78rem; color: #8a8a8f; }
+  .col.drop-hover { background: #171a24; border-color: #6c8cff; }
+  .card { background: #1a1a1e; border: 1px solid #2a2a2f; border-radius: 10px; padding: 10px; margin-bottom: 8px; cursor: grab; }
+  .card:active { cursor: grabbing; }
+  .card.dragging { opacity: .4; }
+  .card .name { font-weight: 700; font-size: .9rem; margin-bottom: 4px; }
+  .card .meta { font-size: .75rem; color: #9a9aa0; line-height: 1.5; }
+  .card .meta b { color: #ddd; }
+  .card .row { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+  .pill { font-size: .7rem; padding: 2px 8px; border-radius: 999px; background: #262629; }
+  .pill.aether { background: #2a2638; color: #b9a6ff; }
+  .days { font-weight: 700; font-size: .78rem; }
+  .days.warn { color: #ffb454; } .days.crit { color: #ff6b6b; } .days.ok { color: #6ede8a; }
+  .wa { color: #25d366; text-decoration: none; font-weight: 700; font-size: .75rem; }
+  .notas { width: 100%; margin-top: 6px; display: none; }
+  .card.show-notas .notas { display: block; }
+  .card .nbtn { float: right; color: #666; cursor: pointer; font-size: .7rem; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1d2a1d; border: 1px solid #3a5a3a; color: #9fe8a8; padding: 10px 18px; border-radius: 10px; font-size: .85rem; opacity: 0; transition: opacity .25s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+  .waQueueBox { display: none; margin-bottom: 22px; }
 </style>
 </head>
 <body>
@@ -42,7 +59,7 @@
 
 <div id="app" style="display:none">
   <h1>Panel de Referidos Outlier</h1>
-  <p class="muted">Seguimiento de leads · dinero en juego · cola de WhatsApp</p>
+  <p class="muted">Arrastra un lead entre columnas para cambiar su etapa · dinero en juego · cola de WhatsApp</p>
 
   <div class="metrics" id="metrics"></div>
 
@@ -51,20 +68,18 @@
     <button class="btn" style="background:#333" onclick="toggleWA()">📱 Cola WhatsApp</button>
   </div>
 
-  <div id="waQueue" style="display:none;margin-bottom:22px"></div>
+  <div class="waQueueBox" id="waQueue"></div>
 
-  <table>
-    <thead><tr>
-      <th>#</th><th>Nombre</th><th>Contacto</th><th>Tipo</th><th>Tareas</th><th>$</th><th>Etapa</th><th>Días</th><th>Notas</th>
-    </tr></thead>
-    <tbody id="rows"></tbody>
-  </table>
+  <div class="board" id="board"></div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
 var SECRET = '';
 var STAGES = [];
 var LEADS = [];
+var DRAG_ID = null;
 
 function enter() {
   SECRET = document.getElementById('secret').value.trim();
@@ -89,7 +104,7 @@ function load(first) {
       document.getElementById('gate').style.display = 'none';
       document.getElementById('app').style.display = 'block';
       STAGES = d.stages; LEADS = d.leads;
-      renderMetrics(d.metrics); renderRows(d.leads); renderWA(d.leads);
+      renderMetrics(d.metrics); renderBoard(d.leads); renderWA(d.leads);
     })
     .catch(function () {
       if (first) document.getElementById('gateErr').textContent = 'Secret incorrecto.';
@@ -107,27 +122,62 @@ function metric(n, l, cls) {
   return '<div class="metric ' + cls + '"><div class="n">' + n + '</div><div class="l">' + l + '</div></div>';
 }
 
-function renderRows(leads) {
-  document.getElementById('rows').innerHTML = leads.map(function (l) {
-    var opts = STAGES.map(function (s) {
-      return '<option value="' + s + '"' + (s === l.etapa ? ' selected' : '') + '>' + s + '</option>';
-    }).join('');
-    var paid = l.etapa === 'pagado' || l.etapa === 'perdido';
-    var dCls = paid ? 'ok' : daysClass(l.days_left);
-    var wa = l.whatsapp ? '<br><a class="wa" target="_blank" href="' + waLink(l.whatsapp, l.nombre) + '">wa ' + esc(l.whatsapp) + '</a>' : '<br><span style="color:#666">sin WhatsApp</span>';
-    var tareas = (l.tasks_done || 0) + '/' + (l.tasks_total || 0);
-    return '<tr>' +
-      '<td>' + l.id + '</td>' +
-      '<td>' + esc(l.nombre) + '</td>' +
-      '<td>' + esc(l.email) + wa + '</td>' +
-      '<td><span class="pill">' + esc(l.tipo || 'Outlier') + '</span></td>' +
-      '<td>' + tareas + '</td>' +
-      '<td style="font-weight:700">$' + (l.reward_usd || 0) + '</td>' +
-      '<td><select onchange="upd(' + l.id + ', this.value)">' + opts + '</select></td>' +
-      '<td class="days ' + dCls + '">' + (paid ? '—' : l.days_left + 'd') + '</td>' +
-      '<td><textarea rows="1" onblur="updNota(' + l.id + ', this.value)">' + esc(l.notas || '') + '</textarea></td>' +
-      '</tr>';
-  }).join('');
+function renderBoard(leads) {
+  var board = document.getElementById('board');
+  board.innerHTML = '';
+  STAGES.forEach(function (st) {
+    var inCol = leads.filter(function (l) { return l.etapa === st; });
+    var usd = inCol.reduce(function (a, l) { return a + (l.reward_usd || 0); }, 0);
+    var col = document.createElement('div');
+    col.className = 'col';
+    col.dataset.stage = st;
+    col.innerHTML =
+      '<div class="col-head"><span class="col-name">' + esc(st) + '</span>' +
+      '<span class="col-count">' + inCol.length + ' · $' + usd + '</span></div>';
+    inCol.forEach(function (l) { col.appendChild(card(l)); });
+    col.addEventListener('dragover', function (e) { e.preventDefault(); col.classList.add('drop-hover'); });
+    col.addEventListener('dragleave', function () { col.classList.remove('drop-hover'); });
+    col.addEventListener('drop', function (e) {
+      e.preventDefault();
+      col.classList.remove('drop-hover');
+      if (DRAG_ID != null && st !== stageOf(DRAG_ID)) upd(DRAG_ID, st);
+    });
+    board.appendChild(col);
+  });
+}
+
+function stageOf(id) {
+  var l = LEADS.find(function (x) { return x.id === id; });
+  return l ? l.etapa : null;
+}
+
+function card(l) {
+  var el = document.createElement('div');
+  el.className = 'card';
+  el.draggable = true;
+  el.dataset.id = l.id;
+  var paid = l.etapa === 'pagado' || l.etapa === 'perdido';
+  var dCls = paid ? 'ok' : daysClass(l.days_left);
+  var wa = l.whatsapp
+    ? '<a class="wa" target="_blank" href="' + waLink(l.whatsapp, l.nombre) + '">💬 wa ' + esc(l.whatsapp) + '</a>'
+    : '<span style="color:#555">sin WhatsApp</span>';
+  el.innerHTML =
+    '<div class="name">' + esc(l.nombre) + ' <span class="nbtn" onclick="toggleNotas(this)">✎</span></div>' +
+    '<div class="meta">' + esc(l.email) + '<br>' + wa + '</div>' +
+    '<div class="row">' +
+      '<span class="pill' + ((l.tipo || '') === 'Aether' ? ' aether' : '') + '">' + esc(l.tipo || 'Outlier') + '</span>' +
+      '<span style="font-weight:700;font-size:.8rem">$' + (l.reward_usd || 0) + '</span>' +
+      '<span class="days ' + dCls + '">' + (paid ? '—' : l.days_left + 'd') + '</span>' +
+      '<span style="font-size:.75rem;color:#9a9aa0">' + (l.tasks_done || 0) + '/' + (l.tasks_total || 0) + '</span>' +
+    '</div>' +
+    '<textarea rows="1" class="notas" placeholder="Notas…" onblur="updNota(' + l.id + ', this.value)">' + esc(l.notas || '') + '</textarea>';
+  el.addEventListener('dragstart', function () { DRAG_ID = l.id; el.classList.add('dragging'); });
+  el.addEventListener('dragend', function () { DRAG_ID = null; el.classList.remove('dragging'); });
+  return el;
+}
+
+function toggleNotas(btn) {
+  btn.closest('.card').classList.toggle('show-notas');
 }
 
 function renderWA(leads) {
@@ -144,7 +194,13 @@ function renderWA(leads) {
 }
 
 function upd(id, etapa) {
-  post('/admin/update', { id: id, etapa: etapa, notas: findNota(id) }).then(function(){ load(); });
+  post('/admin/update', { id: id, etapa: etapa, notas: findNota(id) })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (d.ok) { toast('Movido a «' + etapa + '» ✓'); load(); }
+      else toast('Error: ' + (d.detail || '?'));
+    })
+    .catch(function () { toast('Error de red'); });
 }
 function updNota(id, notas) {
   var l = LEADS.find(function (x) { return x.id === id; });
@@ -156,6 +212,13 @@ function post(url, body) {
   return fetch(url + '?secret=' + encodeURIComponent(SECRET), {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
   });
+}
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._h);
+  t._h = setTimeout(function () { t.classList.remove('show'); }, 1800);
 }
 function esc(s) { return (s == null ? '' : String(s)).replace(/[&<>"]/g, function (c) {
   return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
