@@ -24,6 +24,14 @@ SMTP_PASS = os.environ.get("SMTP_PASS", "")
 SMTP_FROM = os.environ.get("SMTP_FROM", SMTP_USER or "admin@lastminutestickets.com")
 REPLY_TO = os.environ.get("REPLY_TO", "gael@lastminutestickets.com")
 SENDER_NAME = os.environ.get("SENDER_NAME", "Gael L. Chulim Gongora")
+
+# Resend sits behind Cloudflare bot protection: urllib's default UA
+# (Python-urllib/3.x) gets blocked with HTTP 403 / error code 1010, so we
+# spoof a browser UA on every API call.
+_BROWSER_UA = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+)
 LANDING = os.environ.get("PUBLIC_URL", "https://gana-con-outlier.onrender.com")
 
 # day -> (subject, body). {nombre} and {unsub} are filled at send time.
@@ -154,7 +162,8 @@ def send_admin_alert(to: str, lead: dict) -> bool:
         req = urllib.request.Request(
             "https://api.resend.com/emails", data=payload,
             headers={"Authorization": f"Bearer {RESEND_API_KEY}",
-                     "Content-Type": "application/json"},
+                     "Content-Type": "application/json",
+                     "User-Agent": _BROWSER_UA},
         )
         urllib.request.urlopen(req, timeout=20)
         print(f"[emails] alert sent to={to} etapa={etapa}")
@@ -185,6 +194,7 @@ def send_stage_email(*, to: str, nombre: str, day: int, unsubscribe_url: str) ->
                 headers={
                     "Authorization": f"Bearer {RESEND_API_KEY}",
                     "Content-Type": "application/json",
+                    "User-Agent": _BROWSER_UA,
                 },
             )
             urllib.request.urlopen(req, timeout=20)
